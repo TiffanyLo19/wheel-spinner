@@ -1,16 +1,3 @@
-// Wheel Spinner (no libraries)
-// - Items are entered one per line
-// - Shuffle button randomizes item order
-// - Spin button animates, then reports winner at the pointer (top)
-//
-// This version fixes:
-// - High-DPI crisp canvas rendering
-// - Single rendering path (no duplicate drawWheel implementations)
-// - Uses NUMBERS (1..N) on the wheel for readability
-// - Winner shows "number — full category"
-// - Shuffle shuffles the real categories (and renumbers)
-
-// -------------------- DOM --------------------
 const canvas = document.getElementById("wheelCanvas");
 const ctx = canvas.getContext("2d");
 
@@ -22,6 +9,8 @@ const resetBtn = document.getElementById("resetBtn");
 
 const statusText = document.getElementById("statusText");
 const winnerText = document.getElementById("winnerText");
+
+const homeBtn = document.getElementById("homeBtn");
 
 // -------------------- DATA --------------------
 // Full labels (what the user types)
@@ -86,25 +75,30 @@ function stopSpinIfNeeded() {
     spinning = false;
     if (animReq) cancelAnimationFrame(animReq);
     animReq = null;
-    setStatus("Stopped");
+    setStatus("stopped");
   }
 }
 
-// Convert rotation to the index under the pointer at the top.
 function getWinnerIndex() {
   const n = items.length;
   if (n === 0) return -1;
 
   const slice = (2 * Math.PI) / n;
 
-  // Pointer is at top (-PI/2). Undo the wheel rotation to get pointer angle in wheel space.
-  let angle = (-Math.PI / 2 - currentRotation) % (2 * Math.PI);
-  if (angle < 0) angle += 2 * Math.PI;
+  // Pointer at top in canvas angle space
+  const pointerWorldAngle = (3 * Math.PI) / 2;
 
-  // Pick the slice whose CENTER is closest to the pointer (not the slice start boundary)
-  const index = Math.floor((angle + slice / 2) / slice) % n;
+  // Convert pointer into wheel-space (undo wheel rotation)
+  let wheelAngle = pointerWorldAngle - currentRotation;
+  wheelAngle = ((wheelAngle % (2 * Math.PI)) + 2 * Math.PI) % (2 * Math.PI);
 
-  return index;
+  // Nearest slice CENTER:
+  // slice centers are at (i + 0.5) * slice
+  // so shift by half a slice, then round
+  const idx = Math.round((wheelAngle - slice / 2) / slice);
+
+  // Wrap to [0, n)
+  return ((idx % n) + n) % n;
 }
 
 
@@ -115,7 +109,7 @@ function drawNumberLabel(text) {
   if (items.length >= 18) fontSize = 14;
 
   ctx.font = `800 ${fontSize}px ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial`;
-  ctx.fillStyle = "rgba(255,255,255,0.92)";
+  ctx.fillStyle = "rgba(40, 40, 40, 0.9)";
   ctx.textAlign = "center";
   ctx.textBaseline = "middle";
   ctx.fillText(text, 0, 0);
@@ -178,7 +172,9 @@ function drawWheelWithCssSize(cssSize) {
     ctx.arc(0, 0, radius, start, end);
     ctx.closePath();
     ctx.fillStyle =
-      i % 2 === 0 ? "rgba(255,255,255,0.14)" : "rgba(255,255,255,0.06)";
+      i % 2 === 0
+        ? "rgba(255, 235, 238, 0.9)"
+        : "rgba(255, 245, 247, 0.9)";
     ctx.fill();
 
     // Slice border
@@ -225,13 +221,13 @@ function easeOutCubic(t) {
 function spin() {
   const n = items.length;
   if (n < 2) {
-    setStatus("Add at least 2 items to spin");
+    setStatus("add at least 2 items to spin");
     return;
   }
   if (spinning) return;
 
   setWinner("—");
-  setStatus("Spinning...");
+  setStatus("spinning...");
   spinning = true;
 
   const minTurns = 5;
@@ -267,7 +263,7 @@ function spin() {
       } else {
         setWinner("—");
       }
-      setStatus("Done");
+      setStatus("done");
     }
   }
 
@@ -285,7 +281,7 @@ function updateWheelFromInput() {
   stopSpinIfNeeded();
   syncFromTextarea();
   setWinner("—");
-  setStatus(categories.length ? "Updated" : "Add items to start");
+  setStatus(categories.length ? "updated" : "add items to start");
   drawWheel();
 }
 
@@ -299,7 +295,7 @@ function shuffleWheel() {
   itemsInput.value = categories.join("\n");
 
   setWinner("—");
-  setStatus("Shuffled");
+  setStatus("shuffled");
   drawWheel();
 }
 
@@ -329,7 +325,7 @@ function resetWheel() {
 
   currentRotation = 0;
   setWinner("—");
-  setStatus("Ready");
+  setStatus("ready");
   drawWheel();
 }
 
@@ -338,6 +334,10 @@ updateBtn.addEventListener("click", updateWheelFromInput);
 shuffleBtn.addEventListener("click", shuffleWheel);
 spinBtn.addEventListener("click", spin);
 resetBtn.addEventListener("click", resetWheel);
+
+homeBtn.addEventListener("click", () => {
+  window.location.href = "home.html";
+});
 
 // Ctrl/Cmd + Enter to update
 itemsInput.addEventListener("keydown", (e) => {
@@ -350,7 +350,7 @@ itemsInput.addEventListener("keydown", (e) => {
 function resizeAndRedraw() {
   const dpr = window.devicePixelRatio || 1;
 
-  const cssSize = Math.min(520, Math.floor(Math.min(window.innerWidth * 0.9, 520)));
+  const cssSize = Math.min(580, Math.floor(Math.min(window.innerWidth * 0.9, 580)));
   currentCssSize = cssSize;
 
   canvas.style.width = cssSize + "px";
@@ -369,6 +369,6 @@ function resizeAndRedraw() {
 window.addEventListener("resize", resizeAndRedraw);
 
 // Init
-setStatus("Ready");
+setStatus("ready");
 setWinner("—");
 resizeAndRedraw();

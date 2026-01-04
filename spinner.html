@@ -1,0 +1,65 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>spinnnnnn</title>
+    <link rel="stylesheet" href="./style.css" />
+  </head>
+  <body>
+    <div class="page">
+      <header class="header">
+        <h1>weeeeee spin da wheel</h1>
+        <p>1 entry per line, duplicates ok</p>
+      </header>
+
+      <main class="layout">
+        <section class="panel">
+          <h2>options</h2>
+
+          <label class="label" for="itemsInput"></label>
+          <textarea
+            id="itemsInput"
+            placeholder="Pizza&#10;Sushi&#10;Tacos&#10;Ramen"
+            rows="10"
+          ></textarea>
+
+          <div class="row">
+            <button id="updateBtn" class="btn">update</button>
+            <button id="shuffleBtn" class="btn btn-secondary">shuffle</button>
+          </div>
+
+          <div class="row">
+            <button id="spinBtn" class="btn btn-primary">spin</button>
+            <button id="resetBtn" class="btn btn-secondary">reset</button>
+            <button id="homeBtn" class="btn btn-secondary">home</button>
+          </div>
+
+          <div class="status">
+            <div class="status-row">
+              <span class="status-label">status:</span>
+              <span id="statusText">ready</span>
+            </div>
+            <div class="status-row">
+              <span class="status-label">winner:</span>
+              <span id="winnerText">—</span>
+            </div>
+          </div>
+        </section>
+
+        <section class="wheel-wrap">
+          <div class="wheel-card">
+            <div class="pointer" aria-hidden="true"></div>
+            <canvas id="wheelCanvas" width="520" height="520"></canvas>
+          </div>
+        </section>
+      </main>
+
+      <footer class="footer">
+        <small></small>
+      </footer>
+    </div>
+
+    <script src="./script.js"></script>
+  </body>
+</html>

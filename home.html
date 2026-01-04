@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>eepy together</title>
+  <link rel="stylesheet" href="css/site.css" />
+</head>
+<body class="home-page">
+  <div class="hero">
+    <img src="assets/hug.gif" alt="eepy gif" />
+  </div>
+
+
+  <main class="home-card">
+    <header class="home-header">
+      <div class="home-brand">
+        <div class="home-title">eepy together</div>
+        <div class="home-subtitle" id="homeSubtitle">welcome home</div>
+      </div>
+
+      <nav class="home-nav" aria-label="Navigation">
+        <a class="home-link" href="home.html">home</a>
+        <a class="home-link" href="spinner.html">wheel spinner</a>
+        <a class="home-link" href="#" onclick="alert('coming soon'); return false;">idk yet</a>
+      </nav>
+    </header>
+
+    <section class="home-content">
+      <div class="home-panel">
+        <h1 class="home-h1">im a worm 🪱</h1>
+        <p class="home-p">
+          boombabababa
+        </p>
+
+        <div class="home-actions">
+          <a class="home-btn home-btn-primary" href="spinner.html">wheel spinner</a>
+          <a class="home-btn home-btn-ghost" href="index.html">back to beginning</a>
+        </div>
+      </div>
+
+      <div class="home-panel">
+        <h2 class="home-h2">i wub yous</h2>
+        <ul class="home-list">
+          <li>raaahahahahaa</li>
+        </ul>
+      </div>
+    </section>
+  </main>
+
+  <script>
+    // Optional: personalize subtitle based on entry choice
+    const answer = localStorage.getItem("eepy_answer");
+    const el = document.getElementById("homeSubtitle");
+    if (answer === "yes") el.textContent = "meow";
+    if (answer === "no") el.textContent = "raaaaaa";
+  </script>
+
+</body>
+</html>

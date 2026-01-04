@@ -1,73 +1,29 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Wheel Spinner</title>
-    <link rel="stylesheet" href="./style.css" />
-  </head>
-  <body>
-    <div class="page">
-      <header class="header">
-        <h1>Wheel Spinner</h1>
-        <p>Enter items (one per line), update the wheel, shuffle if you want, then spin.</p>
-      </header>
+<head>
+  <meta charset="UTF-8" />
+  <title>eepy together</title>
+  <link rel="stylesheet" href="css/site.css" />
+</head>
+<body class="entry-page">
 
-      <main class="layout">
-        <section class="panel">
-          <h2>Wheel Items</h2>
+  <div class="entry-card">
+    <img
+      id="entryImage"
+      src="assets/chiku.gif"
+      alt="cute character"
+      class="entry-image"
+    />
 
-          <label class="label" for="itemsInput">Items (one per line)</label>
-          <textarea
-            id="itemsInput"
-            placeholder="Pizza&#10;Sushi&#10;Tacos&#10;Ramen"
-            rows="10"
-          ></textarea>
+    <h1 id="questionText">do u loves me</h1>
+    <p id="subText">eeehehehe</p>
 
-          <div class="row">
-            <button id="updateBtn" class="btn">Update Wheel</button>
-            <button id="shuffleBtn" class="btn btn-secondary">Shuffle Order</button>
-          </div>
-
-          <div class="row">
-            <button id="spinBtn" class="btn btn-primary">Spin</button>
-            <button id="resetBtn" class="btn btn-secondary">Reset</button>
-          </div>
-
-          <div class="status">
-            <div class="status-row">
-              <span class="status-label">Status:</span>
-              <span id="statusText">Ready</span>
-            </div>
-            <div class="status-row">
-              <span class="status-label">Winner:</span>
-              <span id="winnerText">—</span>
-            </div>
-          </div>
-
-          <details class="tips">
-            <summary>Tips</summary>
-            <ul>
-              <li>Empty lines are ignored.</li>
-              <li>Duplicate items are allowed.</li>
-              <li>If you update items while spinning, it will stop the spin.</li>
-            </ul>
-          </details>
-        </section>
-
-        <section class="wheel-wrap">
-          <div class="wheel-card">
-            <div class="pointer" aria-hidden="true"></div>
-            <canvas id="wheelCanvas" width="520" height="520"></canvas>
-          </div>
-        </section>
-      </main>
-
-      <footer class="footer">
-        <small></small>
-      </footer>
+    <div class="buttons">
+      <button id="yesBtn">yes</button>
+      <button id="noBtn">No</button>
     </div>
+  </div>
 
-    <script src="./script.js"></script>
-  </body>
+  <script src="js/entry.js"></script>
+</body>
 </html>
