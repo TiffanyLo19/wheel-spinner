@@ -146,18 +146,14 @@ body{
   transform: translateY(-1px);
 }
 
-/* Home page theme (matches entry vibe) */
-.home-page {
+.home-page{
   background: #fdebe3;
   min-height: 100vh;
-
   display: flex;
   flex-direction: column;
   align-items: center;
-
-  justify-content: flex-start; /* not centered */
-  gap: 16px;                   /* controls spacing between gif and card */
-  padding: 24px;
+  justify-content: flex-start; /* key */
+  padding: 16px;
 }
 
 
@@ -294,16 +290,16 @@ body{
   line-height: 1.6;
 }
 
-.hero {
+.hero{
+  width: 100%;
   display: flex;
   justify-content: center;
-  margin: 0; /* let the parent gap handle spacing */
+  margin: 16px 0 12px; /* smaller gap */
 }
 
-
-.hero img {
-  width: 100%;
-  max-width: 360px; /* try 300–400 */
-  border-radius: 24px;
-  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.12);
+.hero img{
+  width: min(92vw, 360px); /* responsive and smaller on phones */
+  height: auto;
+  border-radius: 22px;
+  box-shadow: 0 16px 36px rgba(0,0,0,0.12);
 }
