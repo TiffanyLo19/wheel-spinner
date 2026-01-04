@@ -29,7 +29,9 @@ let categories = [
   "thai",
   "cajun",
   "japanese",
-  "steak"
+  "steak",
+  "gf picks + pays",
+  "bf picks + pays"
 ];
 
 // What we actually draw on the wheel (numbers)
@@ -317,7 +319,9 @@ function resetWheel() {
     "thai",
     "cajun",
     "japanese",
-    "steak"
+    "steak",
+    "gf picks + pays",
+    "bf picks + pays"
   ];
 
   items = categories.map((_, i) => String(i + 1));
