@@ -272,6 +272,8 @@ canvas {
   padding: 16px;
   box-shadow: var(--shadow);
   backdrop-filter: blur(10px);
+  overflow: hidden;
+
 }
 
 .history-head {
@@ -280,7 +282,8 @@ canvas {
   justify-content: space-between;
   gap: 12px;
   margin-bottom: 10px;
-
+  width: 100%;
+  max-width: 100%;
   flex-wrap: wrap; /* ADD THIS */
 }
 
@@ -293,7 +296,9 @@ canvas {
 }
 
 .small-btn {
-  flex: 0 0 auto;
+  flex: 0 1 auto;       /* allow shrink */
+  max-width: 100%;
+  box-sizing: border-box;
   padding: 8px 10px;
   border-radius: 12px;
   font-weight: 900;
@@ -437,7 +442,9 @@ canvas {
 
 @media (max-width: 520px) {
   .history-head {
+    flex-direction: column;     /* THIS is the key */
     align-items: stretch;
+    justify-content: flex-start; /* override space-between on mobile */
   }
 
   .history-head h2 {
@@ -446,6 +453,8 @@ canvas {
 
   .history-head .small-btn {
     width: 100%;
+    max-width: 100%;
+    box-sizing: border-box;
   }
 }
 

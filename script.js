@@ -224,7 +224,7 @@ function drawWheelWithCssSize(cssSize) {
       "700 20px ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial";
     ctx.textAlign = "center";
     ctx.textBaseline = "middle";
-    ctx.fillText("Add items to build the wheel", 0, 0);
+    ctx.fillText("add options to build wheel", 0, 0);
     ctx.restore();
     return;
   }
