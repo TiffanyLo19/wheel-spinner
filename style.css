@@ -23,6 +23,7 @@ body {
   background: var(--bg);
   color: var(--text);
   min-height: 100vh;
+  overflow-x: hidden;
 }
 
 .page {
@@ -189,7 +190,7 @@ textarea:focus {
 .wheel-card {
   position: relative;
   width: 100%;
-  max-width: 640px; /* controls how big the wheel panel can get */
+  max-width: 640px;
   aspect-ratio: 1 / 1;
   background: var(--card);
   border: 1px solid rgba(255, 255, 255, 0.60);
@@ -199,7 +200,10 @@ textarea:focus {
   place-items: center;
   box-shadow: var(--shadow);
   backdrop-filter: blur(10px);
+
+  overflow: hidden; /* ADD THIS */
 }
+
 
 /* Pointer */
 .pointer {
@@ -220,7 +224,9 @@ canvas {
   width: 100%;
   height: 100%;
   border-radius: 16px;
+  display: block; /* ADD THIS */
 }
+
 
 /* Footer */
 .footer {
@@ -274,7 +280,10 @@ canvas {
   justify-content: space-between;
   gap: 12px;
   margin-bottom: 10px;
+
+  flex-wrap: wrap; /* ADD THIS */
 }
+
 
 .history-head h2 {
   margin: 0;
@@ -427,7 +436,16 @@ canvas {
 }
 
 @media (max-width: 520px) {
-  .modal-actions {
-    flex-direction: column;
+  .history-head {
+    align-items: stretch;
+  }
+
+  .history-head h2 {
+    width: 100%;
+  }
+
+  .history-head .small-btn {
+    width: 100%;
   }
 }
+
