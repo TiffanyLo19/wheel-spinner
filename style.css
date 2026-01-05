@@ -330,6 +330,8 @@ canvas {
   overflow-y: auto;
   padding-right: 6px;         /* space so scrollbar doesn't sit on content */
   scrollbar-gutter: stable;   /* keeps layout from shifting when scroll appears */
+  list-style-position: inside; /* KEY FIX */
+
 }
 
 /* Firefox */
