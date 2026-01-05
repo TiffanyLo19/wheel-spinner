@@ -303,3 +303,64 @@ body{
   border-radius: 22px;
   box-shadow: 0 16px 36px rgba(0,0,0,0.12);
 }
+
+.bj-area {
+  display: grid;
+  gap: 14px;
+  margin-top: 14px;
+}
+
+.bj-block {
+  background: rgba(255,255,255,0.35);
+  border: 1px solid rgba(0,0,0,0.06);
+  border-radius: 18px;
+  padding: 14px;
+}
+
+.bj-row {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  margin-bottom: 10px;
+}
+
+.bj-label {
+  font-weight: 900;
+  letter-spacing: -0.01em;
+}
+
+.bj-score {
+  font-weight: 900;
+  opacity: 0.75;
+}
+
+.bj-cards {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.bj-card {
+  width: 54px;
+  height: 74px;
+  border-radius: 14px;
+  background: rgba(255,255,255,0.9);
+  border: 1px solid rgba(0,0,0,0.12);
+  display: grid;
+  place-items: center;
+  font-weight: 900;
+  box-shadow: 0 10px 20px rgba(0,0,0,0.10);
+  user-select: none;
+}
+
+.bj-card[data-red="1"] {
+  color: #c21b3a;
+}
+
+.bj-card[data-red="0"] {
+  color: #15161a;
+}
+
+.bj-card-back {
+  background: rgba(255,255,255,0.65);
+}

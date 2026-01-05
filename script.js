@@ -12,6 +12,19 @@ const winnerText = document.getElementById("winnerText");
 
 const homeBtn = document.getElementById("homeBtn");
 
+const clearBtn = document.getElementById("clearBtn");
+
+const historyList = document.getElementById("historyList");
+const historyEmpty = document.getElementById("historyEmpty");
+const clearHistoryBtn = document.getElementById("clearHistoryBtn");
+
+const resultModal = document.getElementById("resultModal");
+const modalWinner = document.getElementById("modalWinner");
+const closeModalBtn = document.getElementById("closeModalBtn");
+const closeModalBtn2 = document.getElementById("closeModalBtn2");
+const spinAgainBtn = document.getElementById("spinAgainBtn");
+
+
 // -------------------- DATA --------------------
 // Full labels (what the user types)
 let categories = [
@@ -46,6 +59,64 @@ let animReq = null;
 
 // Track current CSS size of the canvas (so animation redraw uses the right size)
 let currentCssSize = 520;
+
+let history = []; // newest first
+
+function formatTime(d) {
+  // simple local time like 7:42 PM
+  return d.toLocaleTimeString([], { hour: "numeric", minute: "2-digit" });
+}
+
+function renderHistory() {
+  if (!historyList || !historyEmpty) return;
+
+  historyList.innerHTML = "";
+
+  if (history.length === 0) {
+    historyEmpty.style.display = "block";
+    return;
+  }
+
+  historyEmpty.style.display = "none";
+
+  for (const h of history) {
+    const li = document.createElement("li");
+
+    li.innerHTML = `
+      <div class="history-item-top">
+        <span class="history-winner">${h.text}</span>
+        <span class="history-time">${h.time}</span>
+      </div>
+    `;
+
+    historyList.appendChild(li);
+  }
+}
+
+function pushHistory(winnerTextValue) {
+  history.unshift({
+    text: winnerTextValue,
+    time: formatTime(new Date())
+  });
+
+  // keep it from getting huge
+  if (history.length > 50) history.pop();
+
+  renderHistory();
+}
+
+function openModal(winnerTextValue) {
+  if (!resultModal || !modalWinner) return;
+  modalWinner.textContent = winnerTextValue || "—";
+  resultModal.classList.add("is-open");
+  resultModal.setAttribute("aria-hidden", "false");
+}
+
+function closeModal() {
+  if (!resultModal) return;
+  resultModal.classList.remove("is-open");
+  resultModal.setAttribute("aria-hidden", "true");
+}
 
 // -------------------- HELPERS --------------------
 function setStatus(text) {
@@ -260,12 +331,19 @@ function spin() {
       animReq = null;
 
       const idx = getWinnerIndex();
+
+      let finalWinner = "—";
       if (idx >= 0 && categories[idx]) {
-        setWinner(`${items[idx]} — ${categories[idx]}`);
-      } else {
-        setWinner("—");
+        finalWinner = `${items[idx]} — ${categories[idx]}`;
       }
+
+      setWinner(finalWinner);
       setStatus("done");
+
+      // history + popup
+      pushHistory(finalWinner);
+      openModal(finalWinner);
+
     }
   }
 
@@ -298,6 +376,19 @@ function shuffleWheel() {
 
   setWinner("—");
   setStatus("shuffled");
+  drawWheel();
+}
+
+function clearOptions() {
+  stopSpinIfNeeded();
+
+  itemsInput.value = "";
+  categories = [];
+  items = [];
+
+  currentRotation = 0;
+  setWinner("—");
+  setStatus("cleared");
   drawWheel();
 }
 
@@ -336,6 +427,7 @@ function resetWheel() {
 // -------------------- EVENTS --------------------
 updateBtn.addEventListener("click", updateWheelFromInput);
 shuffleBtn.addEventListener("click", shuffleWheel);
+clearBtn.addEventListener("click", clearOptions);
 spinBtn.addEventListener("click", spin);
 resetBtn.addEventListener("click", resetWheel);
 
@@ -348,6 +440,34 @@ itemsInput.addEventListener("keydown", (e) => {
   if ((e.ctrlKey || e.metaKey) && e.key === "Enter") {
     updateWheelFromInput();
   }
+});
+
+// History clear
+clearHistoryBtn.addEventListener("click", () => {
+  history = [];
+  renderHistory();
+});
+
+// Modal buttons
+closeModalBtn.addEventListener("click", closeModal);
+closeModalBtn2.addEventListener("click", closeModal);
+
+spinAgainBtn.addEventListener("click", () => {
+  closeModal();
+  spin();
+});
+
+// Click outside card to close
+resultModal.addEventListener("click", (e) => {
+  const target = e.target;
+  if (target && target.dataset && target.dataset.close === "true") {
+    closeModal();
+  }
+});
+
+// ESC to close
+window.addEventListener("keydown", (e) => {
+  if (e.key === "Escape") closeModal();
 });
 
 // -------------------- RESIZE / INIT --------------------
@@ -376,3 +496,5 @@ window.addEventListener("resize", resizeAndRedraw);
 setStatus("ready");
 setWinner("—");
 resizeAndRedraw();
+renderHistory();
+

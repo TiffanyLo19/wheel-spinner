@@ -20,14 +20,16 @@
           <label class="label" for="itemsInput"></label>
           <textarea
             id="itemsInput"
-            placeholder="Pizza&#10;Sushi&#10;Tacos&#10;Ramen"
+            placeholder="enter options"
             rows="10"
           ></textarea>
 
           <div class="row">
             <button id="updateBtn" class="btn">update</button>
             <button id="shuffleBtn" class="btn btn-secondary">shuffle</button>
+            <button id="clearBtn" class="btn btn-secondary">clear</button>
           </div>
+
 
           <div class="row">
             <button id="spinBtn" class="btn btn-primary">spin</button>
@@ -54,10 +56,41 @@
           </div>
         </section>
       </main>
+      <section class="history-panel">
+      <div class="history-head">
+        <h2>history</h2>
+        <button id="clearHistoryBtn" class="btn btn-secondary small-btn">clear history</button>
+      </div>
+
+      <div id="historyEmpty" class="history-empty">no spins yet</div>
+      <ol id="historyList" class="history-list"></ol>
+    </section>
+
 
       <footer class="footer">
         <small></small>
       </footer>
+    </div>
+
+    <div id="resultModal" class="modal" aria-hidden="true">
+      <div class="modal-backdrop" data-close="true"></div>
+
+      <div class="modal-card" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+        <div class="modal-top">
+          <h2 id="modalTitle">winner</h2>
+          <button id="closeModalBtn" class="icon-btn" aria-label="Close">×</button>
+        </div>
+
+        <div class="modal-body">
+          <div id="modalWinner" class="modal-winner">—</div>
+          <div class="modal-sub">yayyyyy noms</div>
+        </div>
+
+        <div class="modal-actions">
+          <button id="spinAgainBtn" class="btn btn-primary">spin again</button>
+          <button id="closeModalBtn2" class="btn btn-secondary">close</button>
+        </div>
+      </div>
     </div>
 
     <script src="./script.js"></script>

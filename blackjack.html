@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>blackjack • eepy together</title>
+  <link rel="stylesheet" href="css/site.css" />
+</head>
+
+<body class="home-page">
+  <main class="home-card">
+    <header class="home-header">
+      <div class="home-brand">
+        <div class="home-title">eepy together</div>
+        <div class="home-subtitle">blackjack</div>
+      </div>
+
+      <nav class="home-nav" aria-label="Navigation">
+        <a class="home-link" href="home.html">home</a>
+        <a class="home-link" href="spinner.html">wheel spinner</a>
+        <a class="home-link" href="blackjack.html">blackjack</a>
+      </nav>
+    </header>
+
+    <section class="home-content" style="grid-template-columns: 1fr;">
+      <div class="home-panel" id="bjRoot">
+        <h1 class="home-h1">blackjack</h1>
+        <p class="home-p" id="bjStatus">press “deal” to start</p>
+
+        <div class="bj-area">
+          <div class="bj-block">
+            <div class="bj-row">
+              <div class="bj-label">dealer</div>
+              <div class="bj-score" id="dealerScore">—</div>
+            </div>
+            <div class="bj-cards" id="dealerCards"></div>
+          </div>
+
+          <div class="bj-block">
+            <div class="bj-row">
+              <div class="bj-label">you</div>
+              <div class="bj-score" id="playerScore">—</div>
+            </div>
+            <div class="bj-cards" id="playerCards"></div>
+          </div>
+        </div>
+
+        <div class="home-actions" style="margin-top: 14px;">
+          <button class="home-btn home-btn-primary" id="dealBtn" type="button">deal</button>
+          <button class="home-btn" id="hitBtn" type="button" disabled>hit</button>
+          <button class="home-btn" id="standBtn" type="button" disabled>stand</button>
+          <button class="home-btn home-btn-ghost" id="resetBtn" type="button">reset</button>
+        </div>
+
+        <p class="home-p" style="margin-top: 14px;">
+          goal: get as close to 21 as possible without going over. dealer hits until 17.
+        </p>
+      </div>
+    </section>
+  </main>
+
+  <script src="js/blackjack.js"></script>
+</body>
+</html>
