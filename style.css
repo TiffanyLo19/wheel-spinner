@@ -254,8 +254,17 @@ canvas {
     grid-template-columns: 1fr;
   }
 
+  /* Explicit mobile order */
+  .panel {
+    order: 1;       /* options panel first */
+  }
+
   .wheel-wrap {
-    order: -1; /* puts the wheel above the input panel */
+    order: 2;       /* wheel second */
+  }
+
+  .history-panel {
+    order: 3;       /* history last */
   }
 }
 
