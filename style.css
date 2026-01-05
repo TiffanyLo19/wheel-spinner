@@ -23,13 +23,28 @@ body {
   background: var(--bg);
   color: var(--text);
   min-height: 100vh;
+
   overflow-x: hidden;
 }
 
+html, body {
+  width: 100%;
+  max-width: 100%;
+}
+
 .page {
+  width: 100%;
   max-width: 1100px;
   margin: 0 auto;
   padding: 20px;
+}
+
+.layout,
+.panel,
+.wheel-wrap,
+.wheel-card,
+.history-panel {
+  min-width: 0;
 }
 
 /* Header */
@@ -221,12 +236,11 @@ textarea:focus {
 }
 
 canvas {
-  width: 100%;
-  height: 100%;
+  display: block;
   border-radius: 16px;
-  display: block; /* ADD THIS */
+  max-width: 100%;
+  height: auto;
 }
-
 
 /* Footer */
 .footer {
@@ -276,23 +290,17 @@ canvas {
 
 }
 
-.history-head {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 12px;
-  margin-bottom: 10px;
-  width: 100%;
-  max-width: 100%;
-  flex-wrap: wrap; /* ADD THIS */
-}
-
-
-.history-head h2 {
-  margin: 0;
+.history-title {
+  margin: 0 0 10px 0;
   font-size: 18px;
   font-weight: 900;
   letter-spacing: -0.01em;
+}
+
+.history-clear {
+  width: 100%;
+  margin-top: 12px;
+  box-sizing: border-box;
 }
 
 .small-btn {
@@ -310,11 +318,44 @@ canvas {
   padding: 10px 2px;
 }
 
+/* Scrollable history list (shows scrollbar after a few items) */
 .history-list {
   margin: 0;
   padding-left: 20px;
   display: grid;
   gap: 10px;
+
+  /* NEW */
+  max-height: 150px;          /* tweak until it feels like ~3–4 items */
+  overflow-y: auto;
+  padding-right: 6px;         /* space so scrollbar doesn't sit on content */
+  scrollbar-gutter: stable;   /* keeps layout from shifting when scroll appears */
+}
+
+/* Firefox */
+.history-list {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(21, 22, 26, 0.18) rgba(255, 255, 255, 0.35);
+}
+
+/* WebKit (Chrome, Safari, iOS) */
+.history-list::-webkit-scrollbar {
+  width: 8px;
+}
+
+.history-list::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.35);
+  border-radius: 999px;
+}
+
+.history-list::-webkit-scrollbar-thumb {
+  background: rgba(21, 22, 26, 0.18);
+  border-radius: 999px;
+  border: 2px solid rgba(255, 255, 255, 0.35);
+}
+
+.history-list::-webkit-scrollbar-thumb:hover {
+  background: rgba(21, 22, 26, 0.26);
 }
 
 .history-list li {
@@ -438,23 +479,5 @@ canvas {
   display: flex;
   gap: 10px;
   margin-top: 12px;
-}
-
-@media (max-width: 520px) {
-  .history-head {
-    flex-direction: column;     /* THIS is the key */
-    align-items: stretch;
-    justify-content: flex-start; /* override space-between on mobile */
-  }
-
-  .history-head h2 {
-    width: 100%;
-  }
-
-  .history-head .small-btn {
-    width: 100%;
-    max-width: 100%;
-    box-sizing: border-box;
-  }
 }
 

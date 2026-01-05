@@ -24,6 +24,9 @@ const closeModalBtn = document.getElementById("closeModalBtn");
 const closeModalBtn2 = document.getElementById("closeModalBtn2");
 const spinAgainBtn = document.getElementById("spinAgainBtn");
 
+const HISTORY_STORAGE_KEY = "wheelHistory_v1";
+const HISTORY_MAX = 50;
+
 
 // -------------------- DATA --------------------
 // Full labels (what the user types)
@@ -60,7 +63,7 @@ let animReq = null;
 // Track current CSS size of the canvas (so animation redraw uses the right size)
 let currentCssSize = 520;
 
-let history = []; // newest first
+let history = loadHistory();
 
 function formatTime(d) {
   // simple local time like 7:42 PM
@@ -99,9 +102,9 @@ function pushHistory(winnerTextValue) {
     time: formatTime(new Date())
   });
 
-  // keep it from getting huge
-  if (history.length > 50) history.pop();
+  if (history.length > HISTORY_MAX) history = history.slice(0, HISTORY_MAX);
 
+  saveHistory();
   renderHistory();
 }
 
@@ -116,6 +119,25 @@ function closeModal() {
   if (!resultModal) return;
   resultModal.classList.remove("is-open");
   resultModal.setAttribute("aria-hidden", "true");
+}
+
+function loadHistory() {
+  try {
+    const raw = localStorage.getItem(HISTORY_STORAGE_KEY);
+    if (!raw) return [];
+    const parsed = JSON.parse(raw);
+    return Array.isArray(parsed) ? parsed : [];
+  } catch {
+    return [];
+  }
+}
+
+function saveHistory() {
+  try {
+    localStorage.setItem(HISTORY_STORAGE_KEY, JSON.stringify(history));
+  } catch {
+    // ignore (private mode / storage blocked)
+  }
 }
 
 // -------------------- HELPERS --------------------
@@ -445,8 +467,10 @@ itemsInput.addEventListener("keydown", (e) => {
 // History clear
 clearHistoryBtn.addEventListener("click", () => {
   history = [];
+  saveHistory();
   renderHistory();
 });
+
 
 // Modal buttons
 closeModalBtn.addEventListener("click", closeModal);
@@ -474,7 +498,18 @@ window.addEventListener("keydown", (e) => {
 function resizeAndRedraw() {
   const dpr = window.devicePixelRatio || 1;
 
-  const cssSize = Math.min(580, Math.floor(Math.min(window.innerWidth * 0.9, 580)));
+  const wheelCard = document.querySelector(".wheel-card");
+  if (!wheelCard) return;
+
+  // wheel-card has 16px padding on both sides (32px total)
+  const padding = 32;
+
+  // size the canvas to the card's inner content width
+  const available = Math.floor(wheelCard.clientWidth - padding);
+
+  // keep your existing max size cap if you want
+  const cssSize = Math.min(580, Math.max(260, available));
+
   currentCssSize = cssSize;
 
   canvas.style.width = cssSize + "px";
@@ -483,12 +518,12 @@ function resizeAndRedraw() {
   canvas.width = Math.floor(cssSize * dpr);
   canvas.height = Math.floor(cssSize * dpr);
 
-  // Draw in CSS units but render crisp in device pixels
   ctx.setTransform(1, 0, 0, 1, 0, 0);
   ctx.scale(dpr, dpr);
 
   drawWheel();
 }
+
 
 window.addEventListener("resize", resizeAndRedraw);
 
