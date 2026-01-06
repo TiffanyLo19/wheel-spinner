@@ -7,10 +7,6 @@
   <link rel="stylesheet" href="css/site.css" />
 </head>
 <body class="home-page">
-  <div class="hero">
-    <img src="assets/hug.gif" alt="eepy gif" />
-  </div>
-
 
   <main class="home-card">
     <header class="home-header">
@@ -30,20 +26,65 @@
         >
           spreadsheet
         </a>
-
+        <a
+          class="home-link"
+          href="https://www.paypal.com/paypalme/xmeiiow"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          donate to ur gf
+        </a>
+        <a class="home-link" href="index.html">back to beginning</a>
       </nav>
     </header>
 
     <section class="home-content">
       <div class="home-panel">
-        <h1 class="home-h1">im a worm 🪱</h1>
-        <p class="home-p">
-          boombabababa
-        </p>
+        <h1 class="home-h1">this is a wip <span class="tag">but it kind of works</span></h1>
+        <section class="bj-area" id="blackjack">
+          <!-- Dealer (top) -->
+          <div class="bj-block">
+            <div class="bj-row">
+              <div class="bj-label">dealer</div>
+              <div class="bj-score">score: <span id="dealerScore">—</span></div>
+            </div>
+
+            <div class="bj-cards">
+              <div id="dealerCards" class="bj-cards-inner"></div>
+
+              <!-- dealer hidden (face-down) card -->
+              <div id="dealerHole" class="bj-card bj-card-back" aria-label="dealer hidden card"></div>
+            </div>
+
+          </div>
+
+          <!-- Player (middle) -->
+          <div class="bj-block">
+            <div class="bj-row">
+              <div class="bj-label">you</div>
+              <div class="bj-score">score: <span id="playerScore">—</span></div>
+            </div>
+
+            <div id="playerCards" class="bj-cards bj-cards-inner"></div>
+          </div>
+
+          <!-- Controls (bottom) -->
+          <div class="bj-block">
+            <div id="bjStatus" class="bj-status">press deal to start</div>
+
+            <div class="bj-actions">
+              <button id="dealBtn" class="btn btn-primary">deal</button>
+              <button id="hitBtn" class="btn btn-secondary" disabled>hit</button>
+              <button id="standBtn" class="btn btn-secondary" disabled>stand</button>
+              <button id="resetBtn" class="btn btn-secondary">reset</button>
+            </div>
+          </div>
+        </section>
+
 
         <div class="home-actions">
-          <a class="home-btn home-btn-primary" href="spinner.html">wheel spinner</a>
-          <a class="home-btn home-btn-ghost" href="index.html">back to beginning</a>
+
+  
         </div>
       </div>
 
@@ -52,17 +93,23 @@
         <ul class="home-list">
           <li>raaahahahahaa</li>
         </ul>
+
+        <!-- HERO MOVED HERE -->
+        <div class="panel-hero">
+          <img src="assets/hug.gif" alt="eepy gif" />
+          <div class="panel-hero-caption">♡</div>
+        </div>
       </div>
     </section>
   </main>
 
   <script>
-    // Optional: personalize subtitle based on entry choice
     const answer = localStorage.getItem("eepy_answer");
     const el = document.getElementById("homeSubtitle");
     if (answer === "yes") el.textContent = "meow";
     if (answer === "no") el.textContent = "raaaaaa";
   </script>
+  <script src="js/blackjack.js" defer></script>
 
 </body>
 </html>

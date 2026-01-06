@@ -1,204 +1,231 @@
-// Simple Blackjack (no betting yet)
-// Rules:
-// - Dealer shows 1st card face up, 2nd face down until reveal
-// - Player can hit/stand
-// - Dealer hits until 17+
-// - Aces count as 11 or 1 (best score <= 21)
+// Blackjack (simple, no betting)
+// Dealer has 1 face-up + 1 face-down (hole) until reveal
+// Player can hit/stand
+// Dealer hits until 17+
+// Aces count as 11 or 1
 
-const dealerCardsEl = document.getElementById("dealerCards");
-const playerCardsEl = document.getElementById("playerCards");
-const dealerScoreEl = document.getElementById("dealerScore");
-const playerScoreEl = document.getElementById("playerScore");
-const statusEl = document.getElementById("bjStatus");
+(function initBlackjack() {
+  const dealerCardsEl = document.getElementById("dealerCards");
+  const dealerHoleEl = document.getElementById("dealerHole");
+  const playerCardsEl = document.getElementById("playerCards");
 
-const dealBtn = document.getElementById("dealBtn");
-const hitBtn = document.getElementById("hitBtn");
+  const dealerScoreEl = document.getElementById("dealerScore");
+  const playerScoreEl = document.getElementById("playerScore");
+  const statusEl = document.getElementById("bjStatus");
+
+const dealBtn  = document.getElementById("dealBtn");
+const hitBtn   = document.getElementById("hitBtn");
 const standBtn = document.getElementById("standBtn");
 const resetBtn = document.getElementById("resetBtn");
 
-const SUITS = ["♠", "♥", "♦", "♣"];
-const RANKS = ["A","2","3","4","5","6","7","8","9","10","J","Q","K"];
+  // If this script is included on a page without the blackjack UI, do nothing.
+  const required = [
+    dealerCardsEl, dealerHoleEl, playerCardsEl,
+    dealerScoreEl, playerScoreEl, statusEl,
+    dealBtn, hitBtn, standBtn, resetBtn
+  ];
+  if (required.some((el) => !el)) return;
 
-let deck = [];
-let dealerHand = [];
-let playerHand = [];
-let inRound = false;
-let dealerHidden = true;
+  const SUITS = ["♠", "♥", "♦", "♣"];
+  const RANKS = ["A","2","3","4","5","6","7","8","9","10","J","Q","K"];
 
-function setStatus(text) {
-  statusEl.textContent = text;
-}
+  let deck = [];
+  let dealerHand = [];
+  let playerHand = [];
+  let inRound = false;
+  let holeHidden = true;
 
-function buildDeck() {
-  const d = [];
-  for (const s of SUITS) {
-    for (const r of RANKS) {
-      d.push({ rank: r, suit: s });
+  function setStatus(text) {
+    statusEl.textContent = text;
+  }
+
+  function buildDeck() {
+    const d = [];
+    for (const s of SUITS) {
+      for (const r of RANKS) d.push({ rank: r, suit: s });
     }
+    for (let i = d.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [d[i], d[j]] = [d[j], d[i]];
+    }
+    return d;
   }
-  // shuffle
-  for (let i = d.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1));
-    [d[i], d[j]] = [d[j], d[i]];
+
+  function drawCard() {
+    if (deck.length === 0) deck = buildDeck();
+    return deck.pop();
   }
-  return d;
-}
 
-function drawCard() {
-  if (deck.length === 0) deck = buildDeck();
-  return deck.pop();
-}
+  function handValue(hand) {
+    let total = 0;
+    let aces = 0;
 
-function handValue(hand) {
-  // Count Aces as 11 initially, then reduce to 1 as needed
-  let total = 0;
-  let aces = 0;
+    for (const c of hand) {
+      if (c.rank === "A") {
+        total += 11;
+        aces += 1;
+      } else if (["K","Q","J"].includes(c.rank)) {
+        total += 10;
+      } else {
+        total += Number(c.rank);
+      }
+    }
 
-  for (const c of hand) {
-    if (c.rank === "A") {
-      total += 11;
-      aces += 1;
-    } else if (["K","Q","J"].includes(c.rank)) {
-      total += 10;
+    while (total > 21 && aces > 0) {
+      total -= 10;
+      aces -= 1;
+    }
+    return total;
+  }
+
+  function isBlackjack(hand) {
+    return hand.length === 2 && handValue(hand) === 21;
+  }
+
+  function makeCardEl(cardObj) {
+    const el = document.createElement("div");
+    el.className = "bj-card";
+
+    const isRed = cardObj.suit === "♥" || cardObj.suit === "♦";
+    el.dataset.red = isRed ? "1" : "0";
+    el.textContent = `${cardObj.rank}${cardObj.suit}`;
+    return el;
+  }
+
+  function setHoleFaceDown() {
+    dealerHoleEl.classList.add("bj-card-back");
+    dealerHoleEl.textContent = "";
+    dealerHoleEl.dataset.red = "0";
+  }
+
+  function setHoleFaceUp(cardObj) {
+    dealerHoleEl.classList.remove("bj-card-back");
+    const isRed = cardObj.suit === "♥" || cardObj.suit === "♦";
+    dealerHoleEl.dataset.red = isRed ? "1" : "0";
+    dealerHoleEl.textContent = `${cardObj.rank}${cardObj.suit}`;
+  }
+
+  function render() {
+    // Player cards
+    playerCardsEl.innerHTML = "";
+    playerHand.forEach((c) => playerCardsEl.appendChild(makeCardEl(c)));
+
+    // Dealer visible cards area (everything except the hole card)
+    dealerCardsEl.innerHTML = "";
+
+    if (dealerHand.length > 0) {
+      dealerCardsEl.appendChild(makeCardEl(dealerHand[0])); // face-up card
+    }
+
+    // If dealer has more than 2 cards, render extras after the hole
+    if (dealerHand.length > 2) {
+      for (let i = 2; i < dealerHand.length; i++) {
+        dealerCardsEl.appendChild(makeCardEl(dealerHand[i]));
+      }
+    }
+
+    // Hole card slot
+    if (holeHidden) {
+      setHoleFaceDown();
+      // show only first card value
+      const first = handValue([dealerHand[0]]);
+      dealerScoreEl.textContent = `${first} + ?`;
     } else {
-      total += Number(c.rank);
+      setHoleFaceUp(dealerHand[1]);
+      dealerScoreEl.textContent = String(handValue(dealerHand));
     }
+
+    playerScoreEl.textContent = String(handValue(playerHand));
   }
 
-  while (total > 21 && aces > 0) {
-    total -= 10;
-    aces -= 1;
+  function setButtons({ canDeal, canPlay }) {
+    dealBtn.disabled = !canDeal;
+    hitBtn.disabled = !canPlay;
+    standBtn.disabled = !canPlay;
   }
 
-  return total;
-}
+  function endRound(message) {
+    inRound = false;
+    holeHidden = false;
+    render();
+    setButtons({ canDeal: true, canPlay: false });
+    setStatus(message);
+  }
 
-function isBlackjack(hand) {
-  return hand.length === 2 && handValue(hand) === 21;
-}
+  function dealerPlay() {
+    holeHidden = false;
+    render();
 
-function renderCards(el, hand, hideSecond) {
-  el.innerHTML = "";
-  hand.forEach((c, idx) => {
-    const card = document.createElement("div");
-    card.className = "bj-card";
-
-    const isRed = c.suit === "♥" || c.suit === "♦";
-    card.dataset.red = isRed ? "1" : "0";
-
-    if (hideSecond && idx === 1) {
-      card.classList.add("bj-card-back");
-      card.textContent = "❔";
-    } else {
-      card.textContent = `${c.rank}${c.suit}`;
+    while (handValue(dealerHand) < 17) {
+      dealerHand.push(drawCard());
     }
-    el.appendChild(card);
-  });
-}
 
-function render() {
-  renderCards(playerCardsEl, playerHand, false);
-  renderCards(dealerCardsEl, dealerHand, dealerHidden);
+    const dVal = handValue(dealerHand);
+    const pVal = handValue(playerHand);
 
-  const pVal = handValue(playerHand);
-  playerScoreEl.textContent = String(pVal);
-
-  if (dealerHidden) {
-    // show only first card value
-    const first = handValue([dealerHand[0]]);
-    dealerScoreEl.textContent = `${first} + ?`;
-  } else {
-    dealerScoreEl.textContent = String(handValue(dealerHand));
-  }
-}
-
-function setButtons({ canDeal, canPlay }) {
-  dealBtn.disabled = !canDeal;
-  hitBtn.disabled = !canPlay;
-  standBtn.disabled = !canPlay;
-}
-
-function endRound(message) {
-  inRound = false;
-  dealerHidden = false;
-  render();
-  setButtons({ canDeal: true, canPlay: false });
-  setStatus(message);
-}
-
-function dealerPlay() {
-  dealerHidden = false;
-  render();
-
-  // Dealer hits until 17+
-  while (handValue(dealerHand) < 17) {
-    dealerHand.push(drawCard());
+    if (dVal > 21) return endRound("dealer busts — you win");
+    if (pVal > dVal) return endRound("you win");
+    if (pVal < dVal) return endRound("dealer wins");
+    return endRound("push (tie)");
   }
 
-  const dVal = handValue(dealerHand);
-  const pVal = handValue(playerHand);
+  function startRound() {
+    deck = buildDeck();
+    dealerHand = [drawCard(), drawCard()];
+    playerHand = [drawCard(), drawCard()];
+    holeHidden = true;
+    inRound = true;
 
-  if (dVal > 21) return endRound("dealer busts — you win");
-  if (pVal > dVal) return endRound("you win");
-  if (pVal < dVal) return endRound("dealer wins");
-  return endRound("push (tie)");
-}
+    setButtons({ canDeal: false, canPlay: true });
+    setStatus("your move");
+    render();
 
-function startRound() {
-  deck = buildDeck();
-  dealerHand = [drawCard(), drawCard()];
-  playerHand = [drawCard(), drawCard()];
-  dealerHidden = true;
-  inRound = true;
+    const pBJ = isBlackjack(playerHand);
+    const dBJ = isBlackjack(dealerHand);
 
-  setButtons({ canDeal: false, canPlay: true });
-  render();
+    if (pBJ && dBJ) return endRound("double blackjack — push");
+    if (pBJ) return endRound("blackjack — you win");
+    if (dBJ) return endRound("dealer blackjack — you lose");
+  }
 
-  const pBJ = isBlackjack(playerHand);
-  const dBJ = isBlackjack(dealerHand);
+  function hit() {
+    if (!inRound) return;
+    playerHand.push(drawCard());
+    render();
 
-  if (pBJ && dBJ) return endRound("double blackjack — push");
-  if (pBJ) return endRound("blackjack — you win");
-  if (dBJ) return endRound("dealer blackjack — you lose");
+    const pVal = handValue(playerHand);
+    if (pVal > 21) return endRound("bust — you lose");
+    if (pVal === 21) return dealerPlay();
+  }
 
-  setStatus("your move");
-}
+  function stand() {
+    if (!inRound) return;
+    setButtons({ canDeal: false, canPlay: false });
+    setStatus("dealer playing…");
+    dealerPlay();
+  }
 
-function hit() {
-  if (!inRound) return;
-  playerHand.push(drawCard());
-  render();
+  function resetAll() {
+    deck = [];
+    dealerHand = [];
+    playerHand = [];
+    holeHidden = true;
+    inRound = false;
 
-  const pVal = handValue(playerHand);
-  if (pVal > 21) return endRound("bust — you lose");
-  if (pVal === 21) return dealerPlay();
-}
+    dealerCardsEl.innerHTML = "";
+    playerCardsEl.innerHTML = "";
+    setHoleFaceDown();
 
-function stand() {
-  if (!inRound) return;
-  setButtons({ canDeal: false, canPlay: false });
-  setStatus("dealer playing…");
-  dealerPlay();
-}
+    dealerScoreEl.textContent = "—";
+    playerScoreEl.textContent = "—";
+    setButtons({ canDeal: true, canPlay: false });
+    setStatus("press deal to start");
+  }
 
-function resetAll() {
-  deck = [];
-  dealerHand = [];
-  playerHand = [];
-  dealerHidden = true;
-  inRound = false;
+  dealBtn.addEventListener("click", startRound);
+  hitBtn.addEventListener("click", hit);
+  standBtn.addEventListener("click", stand);
+  resetBtn.addEventListener("click", resetAll);
 
-  dealerCardsEl.innerHTML = "";
-  playerCardsEl.innerHTML = "";
-  dealerScoreEl.textContent = "—";
-  playerScoreEl.textContent = "—";
-  setButtons({ canDeal: true, canPlay: false });
-  setStatus("press “deal” to start");
-}
-
-dealBtn.addEventListener("click", startRound);
-hitBtn.addEventListener("click", hit);
-standBtn.addEventListener("click", stand);
-resetBtn.addEventListener("click", resetAll);
-
-resetAll();
+  resetAll();
+})();
